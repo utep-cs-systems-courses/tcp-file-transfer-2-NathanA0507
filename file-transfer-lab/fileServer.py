@@ -30,7 +30,7 @@ sock, addr = lsock.accept()
 
 print("connection rec'd from", addr)
 
-print("Receiving file name")
+# print("Receiving file name")
 payload = ""
 
 payload = framedReceive(sock, debug)
@@ -38,6 +38,10 @@ if debug: print("rec'd: ", payload)
 # print(payload)
 # payload += b"!"             # make emphatic!
 # framedSend(sock, b'File received!', debug)
+
+if payload is None:
+    print("File contents were empty, exiting...")
+    sys.exit(1)
 
 payload = payload.decode()
 
@@ -50,6 +54,8 @@ try:
         file = open("./ReceivedFiles/" + fileName, 'w')
         file.write(fileContents)
         file.close()
+    else:
+        print("File with name", fileName, "already exists on server. exiting...")
 except FileNotFoundError:
     print("Fail")
 

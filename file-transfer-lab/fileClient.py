@@ -19,8 +19,8 @@ print("Welcome to Nathan's File-Transfer Lab!")
 
 while True:
     try:
-        # fileName = input("Please enter the name of the file you'd like to send: ")
-        fileName = "testfile.txt"
+        fileName = input("Please enter the name of the file you'd like to send: ")
+        # fileName = "testfile.txt"
         file = open("./FilesToSend/" + fileName, "r")
         break
     except FileNotFoundError:
@@ -52,6 +52,12 @@ if s is None:
     sys.exit(1)
 
 s.connect(addrPort)
+
+fileContents = file.read()
+
+if len(fileContents) == 0:
+    print("File is empty, exiting")
+    sys.exit(1)
 
 print("sending fileName")
 framedSend(s, (fileName + "$$%" + file.read()).encode(), debug)
