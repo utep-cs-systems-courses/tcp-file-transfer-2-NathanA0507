@@ -5,7 +5,7 @@ import socket, sys, re, os
 
 sys.path.append("../lib")       # for params
 import params
-sys.path.append("../framed-echo")
+# sys.path.append("../framed-echo")
 from framedSock import framedSend, framedReceive
 
 
@@ -21,7 +21,7 @@ while True:
     try:
         fileName = input("Please enter the name of the file you'd like to send: ")
         # fileName = "testfile.txt"
-        file = open("./FilesToSend/" + fileName, "r")
+        file = open("./FilesToSend/" + fileName, "rb")
         break
     except FileNotFoundError:
         print("File does not exist, please enter another file name to try again")
@@ -60,15 +60,5 @@ if len(fileContents) == 0:
     sys.exit(1)
 
 print("sending fileName")
-framedSend(s, (fileName + "$$%" + file.read()).encode(), debug)
-#
-# while True:
-#     payload = framedReceive(s, debug)
-#     if debug: print("rec'd: ", payload)
-#     if not payload:
-#         break
-#     print(payload.decode())
-#     framedSend(s, file.read().encode(), debug)
-#
-#     # framedSend(s, b'File name received!', debug)
-#
+
+framedSend(s, fileName, fileContents, debug)

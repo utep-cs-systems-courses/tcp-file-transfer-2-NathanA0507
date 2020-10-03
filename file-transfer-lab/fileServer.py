@@ -3,7 +3,6 @@
 import sys
 sys.path.append("../lib")       # for params
 import re, socket, params, os
-sys.path.append("../framed-echo")
 from framedSock import framedSend, framedReceive
 
 switchesVarDefaults = (
@@ -30,62 +29,30 @@ sock, addr = lsock.accept()
 
 print("connection rec'd from", addr)
 
-# print("Receiving file name")
 payload = ""
+try:
+    fileName, fileContents = framedReceive(sock, debug)
+except:
+    print("File transfer failed")
+    sys.exit(1)
 
-payload = framedReceive(sock, debug)
 if debug: print("rec'd: ", payload)
-# print(payload)
-# payload += b"!"             # make emphatic!
-# framedSend(sock, b'File received!', debug)
 
 if payload is None:
     print("File contents were empty, exiting...")
     sys.exit(1)
 
-payload = payload.decode()
 
-fileName = payload.split("$$%")[0]
-fileContents = payload.split("$$%")[1]
-
+fileName = fileName.decode()
 
 try:
     if not os.path.isfile("./ReceivedFiles/" + fileName):
-        file = open("./ReceivedFiles/" + fileName, 'w')
+        file = open("./ReceivedFiles/" + fileName, 'w+b')
+        # print("FC:", fileContents)
         file.write(fileContents)
         file.close()
+        print("File successfully accepted!")
     else:
         print("File with name", fileName, "already exists on server. exiting...")
 except FileNotFoundError:
     print("Fail")
-
-# try:
-#     if os.path.isfile("./ReceivedFiles/" + payload.decode()):
-#         file = open(payload.decode(), 'w')
-#         print("Receiving file contents:")
-#         while True:
-#             payload = framedReceive(sock, debug)
-#             if debug: print("rec'd: ", payload)
-#             if not payload:
-#                 break
-#
-#             print(payload.decode())
-#             # payload += b"!"             # make emphatic!
-#             framedSend(sock, payload, debug)
-#
-#         file.write(payload.decode())
-# except FileNotFoundError:
-#     print("I don't know when this would happen")
-
-# print("Receiving file contents:")
-# while True:
-#     payload = framedReceive(sock, debug)
-#     if debug: print("rec'd: ", payload)
-#     if not payload:
-#         break
-#
-#     print(payload.decode())
-#     # payload += b"!"             # make emphatic!
-#     framedSend(sock, payload, debug)
-#
-# file.write(payload.decode())
