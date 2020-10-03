@@ -25,34 +25,40 @@ lsock.bind(bindAddr)
 lsock.listen(5)
 print("listening on:", bindAddr)
 
-sock, addr = lsock.accept()
 
-print("connection rec'd from", addr)
+while True:
+    sock, addr = lsock.accept()
 
-payload = ""
-try:
-    fileName, fileContents = framedReceive(sock, debug)
-except:
-    print("File transfer failed")
-    sys.exit(1)
+    if not os.fork():
+        print("connection rec'd from", addr)
+        # sys.exit(1)
 
-if debug: print("rec'd: ", payload)
+        payload = ""
+        try:
+            fileName, fileContents = framedReceive(sock, debug)
+        except:
+            print("File transfer failed")
+            sys.exit(1)
 
-if payload is None:
-    print("File contents were empty, exiting...")
-    sys.exit(1)
+        if debug: print("rec'd: ", payload)
 
+        if payload is None:
+            print("File contents were empty, exiting...")
+            sys.exit(1)
 
-fileName = fileName.decode()
+        fileName = fileName.decode()
 
-try:
-    if not os.path.isfile("./ReceivedFiles/" + fileName):
-        file = open("./ReceivedFiles/" + fileName, 'w+b')
-        # print("FC:", fileContents)
-        file.write(fileContents)
-        file.close()
-        print("File successfully accepted!")
-    else:
-        print("File with name", fileName, "already exists on server. exiting...")
-except FileNotFoundError:
-    print("Fail")
+        try:
+            if not os.path.isfile("./ReceivedFiles/" + fileName):
+                file = open("./ReceivedFiles/" + fileName, 'w+b')
+                # print("FC:", fileContents)
+                file.write(fileContents)
+                file.close()
+                print("File", fileName, "successfully accepted!")
+                sys.exit(0)
+            else:
+                print("File with name", fileName, "already exists on server. exiting...")
+                sys.exit(1)
+        except FileNotFoundError:
+            print("Fail")
+            sys.exit(1)

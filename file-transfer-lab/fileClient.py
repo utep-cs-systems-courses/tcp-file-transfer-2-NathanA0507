@@ -5,7 +5,6 @@ import socket, sys, re, os
 
 sys.path.append("../lib")       # for params
 import params
-# sys.path.append("../framed-echo")
 from framedSock import framedSend, framedReceive
 
 
@@ -20,7 +19,6 @@ print("Welcome to Nathan's File-Transfer Lab!")
 while True:
     try:
         fileName = input("Please enter the name of the file you'd like to send: ")
-        # fileName = "testfile.txt"
         file = open("./FilesToSend/" + fileName, "rb")
         break
     except FileNotFoundError:
