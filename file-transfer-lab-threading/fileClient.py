@@ -1,11 +1,12 @@
 #! /usr/bin/env python3
 
-# Echo client program
+# Client program
 import socket, sys, re, os
+from EncapFramedSock import EncapFramedSock
 
 sys.path.append("../lib")       # for params
 import params
-from framedSock import framedSend, framedReceive
+
 
 
 switchesVarDefaults = (
@@ -51,6 +52,8 @@ if s is None:
 
 s.connect(addrPort)
 
+encapSock = EncapFramedSock((s, addrPort))
+
 fileContents = file.read()
 
 if len(fileContents) == 0:
@@ -59,4 +62,4 @@ if len(fileContents) == 0:
 
 print("sending fileName")
 
-framedSend(s, fileName, fileContents, debug)
+encapSock.send(fileName, fileContents, debug)
