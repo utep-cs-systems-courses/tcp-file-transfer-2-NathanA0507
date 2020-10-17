@@ -19,6 +19,7 @@ class EncapFramedSock:  # a facade
     def receive(self, debugPrint=0):
         state = "getLength"
         msgLength = -1
+        # recieved = 0
         while True:
             if (state == "getLength"):
                 match = re.match(b'([^:]+):(.*):(.*)', self.rbuf, re.DOTALL | re.MULTILINE) # look for colon
@@ -26,6 +27,7 @@ class EncapFramedSock:  # a facade
                     lengthStr, file_name, self.rbuf = match.groups()
                     try:
                         msgLength = int(lengthStr)
+                        # print(msgLength)
                     except:
                         if len(self.rbuf):
                             print("badly formed message length:", lengthStr)
@@ -38,6 +40,8 @@ class EncapFramedSock:  # a facade
                     return file_name, payload
             r = self.sock.recv(100)
             self.rbuf += r
+            # recieved = recieved + 100
+            # print('\t', recieved)
             if len(r) == 0:
                 if len(self.rbuf) != 0:
                     print("FramedReceive: incomplete message. \n state=%s, length=%d, self.rbuf=%s" % (
